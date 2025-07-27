@@ -28,6 +28,35 @@ calendar_extractor_agent = Agent(
     output_type=CalendarEvent,
 )
 
-calendar_agent = Agent(
-    name="Calendar Agent",
-    instructions="Create a calendar event based on the user's request",
+booking_agent = Agent(
+    name="Booking Agent",
+    instructions="Book a hotel room for a given date",
+    model="gpt-4o-mini",
+)
+
+refund_agent = Agent(
+    name="Refund Agent",
+    instructions="Refund a given amount of money",
+    model="gpt-4o-mini",
+)
+
+triage_agent = Agent(
+    name="Triage Agent",
+    instructions=(
+        "Help the user with their questions."
+        "If they ask about booking, handoff to the booking agent."
+        "If they ask about refunds, handoff to the refund agent."
+    ),
+    model="gpt-4o-mini",
+    handoffs=[booking_agent, refund_agent],
+)
+
+pirate_agent = Agent(
+    name="Pirate Agent",
+    instructions="Write like a pirate",
+)
+
+robot_agent = Agent(
+    name="Robot Agent",
+    instructions="Write like a robot",
+)
