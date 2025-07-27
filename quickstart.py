@@ -6,7 +6,7 @@ from agents.exceptions import InputGuardrailTripwireTriggered
 import asyncio
 from pydantic import BaseModel
 
-load_dotenv(".env.local")
+load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
 

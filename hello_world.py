@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from agents import Agent, Runner
 
-load_dotenv('.env.local')  
+load_dotenv()  
 api_key = os.getenv('OPENAI_API_KEY')
 
 agent = Agent(name="Assistant", instructions="You are a helpful assistant")
