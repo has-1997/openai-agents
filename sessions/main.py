@@ -136,10 +136,65 @@ class MyCustomSession:
 async def custom_memory():
     agent = Agent(name="Assistant")
     result = await Runner.run(
-        agent, "What's 2 + 2?", 
-        session=MyCustomSession("my_session")
+        agent, "What's 2 + 2?", session=MyCustomSession("my_session")
     )
 
 
+# Session management
+async def session_management():
+    # Clear a session when conversation should start fresh
+    session = SQLiteSession("user_123")
+    await session.clear_session()
+
+    # Different agents can share the same session
+    support_agent = Agent(name="Support")
+    billing_agent = Agent(name="Billing")
+    session = SQLiteSession("user_123")
+
+    # Both agents can access the same session
+    result1 = await Runner.run(
+        support_agent, "Help me with my account", session=session
+    )
+    result2 = await Runner.run(billing_agent, "I need to pay my bill", session=session)
+    print(f"Support: {result1.final_output}")
+    print(f"Billing: {result2.final_output}")
+
+
+# Complete example
+async def main():
+    # Create an agent
+    agent = Agent(name="Assistant", instructions="Reply very concisely.")
+
+    # Create a session instance that will persist across runs
+    session = SQLiteSession("conversation_123", "conversation_history.db")
+
+    print("=== Sessions Example ===")
+    print("The agent will remember previous messages automatically.\n")
+
+    # First turn
+    print("First turn:")
+    print("User: What city is the Golden Gate Bridge in?")
+    result = await Runner.run(agent, "What city is the Golden Gate Bridge in?", session=session)
+    print(f"Agent: {result.final_output}")
+    print()
+
+    # Second turn - the agent will remember the previous conversation
+    print("Second turn:")
+    print("User: What state is it in?")
+    result = await Runner.run(agent, "What state is it in?", session=session)
+    print(f"Agent: {result.final_output}")
+    print()
+
+    # Third turn - the agent will remember the previous conversation
+    print("Third turn:")
+    print("User: What's the population of the city?")
+    result = await Runner.run(agent, "What's the population of that state?", session=session)
+    print(f"Agent: {result.final_output}")
+    print()
+
+    print("=== Conversation Complete ===")
+    print("Notice how the agent remembered the context from previous turns!")
+    print("Sessions automatically handles conversation history.")
+
 if __name__ == "__main__":
-    asyncio.run(corrections())
+    asyncio.run(main())
