@@ -9,7 +9,9 @@ load_dotenv(ROOT_DIR / ".env")
 
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
-    raise RuntimeError("OPENAI_API_KEY not found in environment. Ensure it exists in the root .env file.")
+    raise RuntimeError(
+        "OPENAI_API_KEY not found in environment. Ensure it exists in the root .env file."
+    )
 
 client = OpenAI(api_key=api_key)
 
@@ -44,3 +46,128 @@ client = OpenAI(api_key=api_key)
 # print(response.output_text)
 
 # Use a file URL as input
+# response = client.responses.create(
+#     model="gpt-5",
+#     input=[
+#         {
+#             "role": "user",
+#             "content": [
+#                 {
+#                     "type": "input_text",
+#                     "text": "Analyze the letter and provide a summary of the key points. <50 words",
+#                 },
+#                 {
+#                     "type": "input_file",
+#                     "file_url": "https://www.berkshirehathaway.com/letters/2024ltr.pdf",
+#                 },
+#             ],
+#         }
+#     ],
+# )
+
+# print(response.output_text)
+
+
+# Upload a file and use it as input
+# file = client.files.create(
+#     file=open("data/random_data.pdf", "rb"),
+#     purpose="user_data",
+# )
+
+# print(file.id)
+
+# response = client.responses.create(
+#     model="gpt-5",
+#     input=[
+#         {
+#             "role": "user",
+#             "content": [
+#                 {
+#                     "type": "input_file",
+#                     "file_id": file.id,
+#                 },
+#                 {
+#                     "type": "input_text",
+#                     "text": "Who is the first person in the data?",
+#                 },
+
+#             ],
+#         }
+#     ],
+# )
+
+# print(response.output_text)
+
+
+# Use web search in a response
+# response = client.responses.create(
+#     model="gpt-5",
+#     tools=[{"type": "web_search_preview"}],
+#     input="What was a positive news story from today?",
+# )
+
+# print(response.output_text)
+
+# Search your files in a response
+# response = client.responses.create(
+#     model="gpt-4.1",
+#     input="What is deep research by OpenAI?",
+#     tools=[{
+#         "type": "file_search",
+#         "vector_store_ids": ["vs_1234567890"],
+#     }],
+# )
+
+# Call your own function
+# tools = [
+#     {
+#         "type": "function",
+#         "name": "get_weather",
+#         "description": "Get the temperature for a given location.",
+#         "parameters": {
+#             "type": "object",
+#             "properties": {
+#                 "location": {
+#                     "type": "string",
+#                     "description": "City and country e.g. London, UK",
+#                 }
+#             },
+#             "required": ["location"],
+#             "additionalProperties": False,
+#         },
+#         "strict": True,
+#     }
+# ]
+
+# response = client.responses.create(
+#     model="gpt-4o",
+#     input=[
+#         {
+#             "role": "user",
+#             "content": "What is the weather like in Paris today?",
+#         },
+#     ],
+#     tools=tools,
+# )
+
+# print(response.output[0].to_json())
+
+
+# Call a remote MCP server
+# response = client.responses.create(
+#     model="gpt-4.1",
+#     tools=[
+#         {
+#             "type": "mcp",
+#             "server_label": "deepwiki",
+#             "server_url": "https://mcp.deepwiki.com/mcp",
+#             "require_approval": "never"
+#         }
+#     ],
+#     input="What transport protocols are supported in the 2025-03-26 version of the MCP spec?",
+# )
+
+# print(response.output_text)
+
+
+# Stream server-sent events from the API
