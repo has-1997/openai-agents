@@ -2,6 +2,8 @@ from openai import OpenAI
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import asyncio
+from agents import Agent, Runner
 
 # Load environment variables from project root .env
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -14,6 +16,7 @@ if not api_key:
     )
 
 client = OpenAI(api_key=api_key)
+model = "gpt-5-nano-2025-08-07"
 
 # Generate text from a model
 # response = client.responses.create(
@@ -171,3 +174,41 @@ client = OpenAI(api_key=api_key)
 
 
 # Stream server-sent events from the API
+# stream = client.responses.create(
+#     model="gpt-4o",
+#     input=[
+#         {
+#             "role": "user",
+#             "content": "Say 'double bubble bath' three times fast.",
+#         }
+#     ],
+#     stream=True,
+# )
+
+# for event in stream:
+#     print(event)
+
+
+# Build a language triage agent
+# spanish_agent = Agent(
+#     name="Spanish agent",
+#     instructions="You only speak Spanish.",
+# )
+
+# english_agent = Agent(
+#     name="English agent",
+#     instructions="You only speak English.",
+# )
+
+# triage_agent = Agent(
+#     name="Triage agent",
+#     instructions="Handoff to the appropriate agent based on the language of the request.",
+#     handoffs=[spanish_agent, english_agent],
+# )
+
+# async def language_triage_agent():
+#     result = await Runner.run(triage_agent, input="Hola, ¿cómo estás?")
+#     print(result.final_output)
+
+# if __name__ == "__main__":
+#     asyncio.run(language_triage_agent())
