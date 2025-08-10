@@ -92,7 +92,6 @@ tool = FunctionTool(
 
 
 # Agents as tools
-
 async def agent_as_tool():
     spanish_agent = Agent(
         name="Spanish agent",
@@ -127,6 +126,27 @@ async def agent_as_tool():
         "Translate the following message to Spanish and French: 'Hello, how are you?'",
     )
     print(result.final_output)
+
+
+# Customising tool agents
+@function_tool
+async def run_my_agent() -> str:
+    """A tool that runs the agent with custom configs"""
+    agent = Agent(
+        name="Assistant",
+        instructions="You are a helpful assistant that can answer questions and help with tasks.",
+    )
+    
+    result = await Runner.run(
+        agent,
+        "What is the capital of France?",
+        max_turns=5
+    )
+    return result.final_output
+
+
+
+
 
 
 
