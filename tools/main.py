@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from agents import Agent, Runner, FileSearchTool, WebSearchTool, FunctionTool, RunContextWrapper, function_tool
+from agents import Agent, Runner, FileSearchTool, WebSearchTool, FunctionTool, RunContextWrapper, function_tool, RunResult, ToolCallOutputItem
 import asyncio
 import json
 from typing_extensions import TypedDict, Any
@@ -136,7 +136,7 @@ async def run_my_agent() -> str:
         name="Assistant",
         instructions="You are a helpful assistant that can answer questions and help with tasks.",
     )
-    
+
     result = await Runner.run(
         agent,
         "What is the capital of France?",
@@ -145,10 +145,25 @@ async def run_my_agent() -> str:
     return result.final_output
 
 
+# Custom output extraction
+async def extract_json_payload(run_result: RunResult) -> str:
+    # Scan the agent’s outputs in reverse order until we find a JSON-like message from a tool call.
+    for item in reversed(run_result.new_items):
+        if isinstance(item, ToolCallOutputItem) and item.output.strip().startswith("{"):
+            return item.output.strip()
+    return "{}"
+
+data_agent = Agent(
+    name="Data agent",
+    instructions="You are a helpful assistant that can answer questions and help with tasks.",
+)
 
 
-
-
+json_tool = data_agent.as_tool(
+    tool_name="get_data_json",
+    tool_description="Run the data agent and return only its JSON payload",
+    custom_output_extractor=extract_json_payload,
+)
 
 
 if __name__ == "__main__":
